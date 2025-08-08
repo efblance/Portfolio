@@ -38,6 +38,121 @@
         return gk_fileData[filename] || "";
         }
         </script><!DOCTYPE html>
+
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emma Blancett | Electrical Engineering Portfolio </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+	 <style>
+        .profile-photo {
+            width: 187.5px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 6px;
+            position: absolute;
+            top: 100px; /* Lowered to adjust position */
+            left: 110px; /* Maintains left overhang */
+            border: 4px solid #D3D3D3; /* Blends with background */
+        }
+    </style>
+
+	<style>
+        .belltower  {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+		position: absolute;
+        top: 6px; /* Lowered to adjust position */
+        left: 1290px; /* Maintains left overhang */
+    }
+    </style>
+
+	
+</head>
+<body style="background-image:url('images/background_geo.png'); background-attachment: fixed; background-size: cover, auto; background-position: center, center; background-color: #4B5563;">
+     <header class="bg-gray-900 bg-opacity-65 text-white py-4">
+		 <img src="images/real_belltower_seal.png" alt="Seal" class="belltower" />
+        <div class="container mx-auto text-left">
+            <h2 class="text-3xl text-white font-mono">Emma Blancett | ASCEND REU </h2> 
+
+        </div>
+    </header>
+	
+   <section id="about" class="py-8">
+        <div class="container mx-auto px-4">
+          <h2 class="text-3xl font-bold text-center text-gray-800 mb-6"> <br> </h2>
+            <div class="bg-white p-4 max-w-min mx-auto">
+	      <img src="images/headshot.JPG" alt="Example Profile Photo" class="profile-photo" />
+                <p  class="text-xl text-gray-800 font-mono leading-relaxed mb-4 ">
+              Welcome! 
+	          My name is Emma Blancett, and I am an Electrical Engineering Junior studying 
+			  at North Carolina State University with a strong interest in RF and analog design. 
+		      In this portfolio, I hope to showcase the different projects I have worked on
+			  as part of research groups and independently. Below you will find my project
+			  highlights, my resume, and contact information.
+		      Thank you for stopping by and feel free to click around and learn more about my work! </p>
+            </div>
+        </div>
+    </section>
+
+	
+<div class="py-12">
+    <footer class="bg-gray-900 font-mono text-white py-6">
+        <div class="container mx-auto text-center">
+            <p> 2025 Emma Blancett. Thank you for visiting!</p>
+        </div>
+    </footer>
+</body>
+
+
+        <!--
+
+
+
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -58,4 +173,4 @@
         <a href="index.html" class="text-blue-500 hover:underline">Back to Portfolio</a>
     </div>
 </body>
-</html>
+</html> -->
