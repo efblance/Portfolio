@@ -38,24 +38,169 @@
         return gk_fileData[filename] || "";
         }
         </script><!DOCTYPE html>
+
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coil Project</title>
+    <title>Emma Blancett | Electrical Engineering Portfolio </title>
     <script src="https://cdn.tailwindcss.com"></script>
+
+	<style>
+        .belltower  {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+		position: absolute;
+        top: 6px; /* Lowered to adjust position */
+        left: 1290px; /* Maintains left overhang */
+    }
+    </style>
+
+	
 </head>
-<body class="bg-gray-100">
-    <header class="bg-gradient-to-r from-blue-400 to-blue-200 text-white py-6">
-        <div class="container mx-auto text-center">
-            <h1 class="text-4xl font-bold">Coil Project</h1>
-            <p class="mt-2 text-lg">Electrical Engineering Student | RF & Antenna Projects</p>
+<body style="background-image:url('images/background_geo.png'); background-attachment: fixed; background-size: cover, auto; background-position: center, center; background-color: #4B5563;">
+     <header class="bg-gray-900 bg-opacity-65 text-white py-4">
+		 <img src="images/real_belltower_seal.png" alt="Seal" class="belltower" />
+        <div class="container mx-auto text-left">
+            <h2 class="text-3xl text-white font-mono">Emma Blancett | Levatating a Small Magnet with Coil </h2> 
+
         </div>
     </header>
-    <div class="container mx-auto px-4 py-8">
-        <h2 class="text-2xl font-semibold mb-4">Project Details</h2>
-        <p class="text-gray-600 mb-4">This project focuses on designing and testing RF coils for enhanced signal transmission. Work involved electromagnetic simulations and lab measurements using tools like CST and VNA.</p>
-        <a href="index.html" class="text-blue-500 hover:underline">Back to Portfolio</a>
+	
+  <section id="about" class="py-8 relative">
+<section id="about" class="py-8 relative">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-6"></h2>
+    <div class="relative">
+      <div
+        class="absolute inset-0 bg-gray-800 opacity-70 -z-10"
+        style="width: calc(75% + 110px); height: calc(100% + 36px); margin-left: 100px; margin-top: -20px;"
+      ></div>
+      <div class="bg-white p-4 w-4/5 mx-auto relative z-10">
+        <!-- Header Space -->
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Electromagnetic Levatation of a Magnet with Coil Overview</h3>
+        <p class="text-xl text-gray-800 font-mono leading-relaxed mb-2">
+          As a part of the ASCEND REU, I was able to work on automating the VNA measurement process for an anechoic chamber. Over these 
+          ten weeks, my work included creating functions and scripts in Python to enable VNA-chamber set up calibration, s21 and s11 
+          measurements, normalizing and applying calibration factors to S-parameter data, more plotting capabilities, and implementing
+          a more dynamic data processing tool. These added features were managed in an enhanced GUI which helps streamline the 
+          measurement process and create .csv files for post processing data in outside software.
+        </p>
+        <!-- Videos on Same Line with Captions -->
+        <div class="w-full h-96 flex flex-row justify-center items-center space-x-4 mb-2">
+          <figure class="w-6/12">
+            <video
+              src="images/IMG_1457.mp4"
+              alt="Interactive VNA Measurement GUI Demo"
+              class="w-full h-4/5 object-contain"
+              controls
+            ></video>
+            <figcaption class="text-sm text-gray-600 text-center mt-2">
+              Iteration 1 of Coil
+            </figcaption>
+          </figure>
+          <figure class="w-6/12">
+            <img
+              src="images/Screenshot 2025-09-08 090555.png"
+              alt="Live Plot VNA Measurement GUI Demo"
+              class="w-full h-4/5 object-contain"
+              controls
+            ></img>
+            <figcaption class="text-sm text-gray-600 text-center mt-2">
+              Control Circuit
+            </figcaption>
+          </figure>
+        </div>
+        <p class="text-xl text-gray-800 font-mono leading-relaxed mb-2">
+          With new features and a revamped GUI, the last thing to do was test the accuracy of the chamber. 
+          In the final weeks of my research experience, I was able to build a few antennas and take s-parameter measurements in the chamber so
+         we could compare our measurements to their data sheets. The the following results you can see that our measurements were within the 
+		   data sheet specifications. Concluding this project, I was fortunate enough to present these results at the Undergraduate Research 
+          Summer Symposium.
+        </p>
+        <!-- Presentation Image -->
+	 <div class="w-full h-96 flex flex-row justify-center items-center space-x-2 mb-2">
+                        <figure class="w-full">
+                            <img
+                                src="images/patch.png"
+                                alt="Patch Antenna"
+                                class="w-full h-3/4 object-contain"
+                            >
+                            <figcaption class="text-sm text-gray-600 text-center mt-2">
+                                Patch Antenna Built from Anten'it Research Kit
+                            </figcaption>
+                        </figure>
+                        <figure class="w-10/12">
+                            <img
+                                src="images/horn.png"
+                                alt="Horn Antenna"
+                                class="w-full h-3/4 object-contain"
+                            >
+                            <figcaption class="text-sm text-gray-600 text-center mt-2">
+                                Horn Antenna Built from Anten'it Research Kit
+                            </figcaption>
+                        </figure>
+                    </div>
+		   <p class="text-xl text-gray-800 font-mono leading-relaxed mb-2">
+		   <!-- TEST-->
+        </p>
+        <div class="w-full h-full flex justify-center items-center">
+          <img
+            src="images/REU_Presentation.png"
+            alt="REU Presentation Slide"
+            class="w-full h-full object-contain"
+          >
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+
+  <footer class="bg-gray-800 font-mono text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2025 Emma Blancett. Thank you for visiting!</p>
+		</div>
+    </footer>
 </body>
-</html>
